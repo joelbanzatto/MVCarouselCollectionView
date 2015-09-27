@@ -48,14 +48,15 @@ class MVCarouselCellScrollView: UIScrollView, UIScrollViewDelegate {
         super.awakeFromNib()
         
         self.delegate = self
-        self.imageView.contentMode = UIViewContentMode.ScaleAspectFit
+        self.imageView.contentMode = UIViewContentMode.ScaleAspectFill
     }
 
     func resetZoom() {
         if self.imageView.image == nil {
             return
         }
-        var imageSize = self.imageView.image!.size
+        let imageSize = self.imageView.image!.size
+//        let imageSize = self.imageView.bounds.size
         
         // nothing to do if image is not set
         if CGSizeEqualToSize(imageSize, CGSizeZero) {
@@ -63,28 +64,28 @@ class MVCarouselCellScrollView: UIScrollView, UIScrollViewDelegate {
         }
         
         // Stack overflow people suggest this, not sure if it applies to us
-        self.imageView.contentMode = UIViewContentMode.Center
-        if cellSize.width > imageSize.width && cellSize.height > imageSize.height {
-            self.imageView.contentMode = UIViewContentMode.ScaleAspectFit
-        }
+        self.imageView.contentMode = UIViewContentMode.ScaleAspectFill
+//        if cellSize.width > imageSize.width && cellSize.height > imageSize.height {
+//            self.imageView.contentMode = UIViewContentMode.ScaleAspectFill
+//        }
         
-        var cellAspectRatio : CGFloat = self.cellSize.width / self.cellSize.height
-        var imageAspectRatio : CGFloat = imageSize.width / imageSize.height
-        var cellAspectRatioWiderThanImage = cellAspectRatio > imageAspectRatio
+        let cellAspectRatio : CGFloat = self.cellSize.width / self.cellSize.height
+        let imageAspectRatio : CGFloat = imageSize.width / imageSize.height
+        let cellAspectRatioWiderThanImage = cellAspectRatio > imageAspectRatio
         
         // Calculate Zoom
         // If image is taller, then make edge to edge height, else make edge to edge width
-        var zoom = cellAspectRatioWiderThanImage ? cellSize.height / imageSize.height : cellSize.width / imageSize.width
+        let zoom = cellAspectRatioWiderThanImage ? cellSize.height / imageSize.height : cellSize.width / imageSize.width
         
         self.maximumZoomScale = zoom * CGFloat(zoomToUse())
         self.minimumZoomScale = zoom
-        self.zoomScale = zoom
+        self.zoomScale = 0.80
         
         // Update content inset
-        var adjustedContentWidth = cellSize.height * imageAspectRatio
-        var horzContentInset = cellAspectRatioWiderThanImage ? 0.5 * (cellSize.width - adjustedContentWidth) : 0.0
-        var adjustedContentHeight = cellSize.width / imageAspectRatio
-        var vertContentInset = !cellAspectRatioWiderThanImage ? 0.5 * (cellSize.height - adjustedContentHeight) : 0.0
+        let adjustedContentWidth = cellSize.height * imageAspectRatio
+        let horzContentInset = 0.0 as CGFloat // cellAspectRatioWiderThanImage ? 0.5 * (cellSize.width - adjustedContentWidth) : 0.0
+        let adjustedContentHeight = cellSize.width / imageAspectRatio
+        let vertContentInset = !cellAspectRatioWiderThanImage ? 0.5 * (cellSize.height - adjustedContentHeight) : 0.0
     
         self.contentInset = UIEdgeInsetsMake(vertContentInset, horzContentInset, vertContentInset, horzContentInset)
     }
